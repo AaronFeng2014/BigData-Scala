@@ -1,6 +1,5 @@
 package com.aaron.bigdata
 
-import org.apache.hadoop.hdfs.protocol.datatransfer.Receiver
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.dstream.ReceiverInputDStream
@@ -33,7 +32,7 @@ object LogAnalyzer
         //val inputStream: DStream[String] = stream.textFileStream("C:\\Users\\Aaron\\Desktop")
 
         val lines: ReceiverInputDStream[String] = stream.socketTextStream("192.168.2.175", 12345, StorageLevel.MEMORY_ONLY)
-         val result : Receiver[String] =lines.getReceiver()
+        val result: Receiver[String] = lines.getReceiver()
         println(lines.getReceiver())
         //val words = lines.flatMap(_.split(" "))
 
