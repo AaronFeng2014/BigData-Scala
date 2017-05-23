@@ -50,20 +50,7 @@ object MethodParameterLearning
     }
 
 
-    def main(args: Array[String]): Unit =
-    {
-        // printTime(System.currentTimeMillis())
-
-        //openResource(resourceManager)
-
-        //val a = s(4)
-        //println(s(9, 8))
-        //println(sum2(a => a * a)(1, 4))
-        println(f(2, 3l))
-    }
-
-
-    var f: (Int, Long) => String = new Function2[Int, Long, String]
+    var f: (Int, Long) => String = new ((Int, Long) => String)
     {
         override def apply(v1: Int, v2: Long): String = "gfvc666666666"
     }
@@ -109,5 +96,24 @@ object MethodParameterLearning
             }
         }
 
+    }
+
+
+    /**
+      * 限定类型
+      * @param flyable
+      * @tparam Flyable
+      */
+    def canFly[Flyable <:{def fly():Unit}](flyable : => Flyable): Unit =
+    {
+        flyable.fly()
+    }
+
+
+    def main(args: Array[String]): Unit =
+    {
+        //canFly(new Bird())
+        //canFly(new Plane())
+        //canFly(new Car())
     }
 }
