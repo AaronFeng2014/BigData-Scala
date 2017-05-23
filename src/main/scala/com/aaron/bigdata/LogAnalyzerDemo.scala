@@ -16,19 +16,16 @@ object LogAnalyzerDemo
 
     val LOG_PATH: String = "hdfs://192.168.2.175:25555/home/aaron/hadoop-2.7.3/tmp/dfs/data/people.txt"
 
+    System.setProperty("hadoop.home.dir", "D:\\develop\\大数据\\hadoop-2.7.3")
 
-    def main(args: Array[String]): Unit =
+    val session: SparkSession = SparkSession.builder().master("spark://192.168.2.175:7077").appName("LogAnalyzer").getOrCreate()
+
+    val stream: StreamingContext = new StreamingContext(session.sparkContext, Duration(3000))
+
+
+    def socketStreaming(): Unit =
     {
-        System.setProperty("hadoop.home.dir", "D:\\develop\\大数据\\hadoop-2.7.3")
-
-        val session: SparkSession = SparkSession.builder().master("spark://192.168.2.175:7077").appName("LogAnalyzer").getOrCreate()
-
-        val stream = new StreamingContext(session.sparkContext, Duration(3000))
-
         val lines: ReceiverInputDStream[String] = stream.socketTextStream("192.168.2.175", 12345, StorageLevel.MEMORY_ONLY)
-
-        //val result: Receiver[String] = lines.getReceiver()
-
 
         val analyzer: LogAnalyzer = new LogAnalyzerWithStreaming
 
@@ -37,4 +34,12 @@ object LogAnalyzerDemo
         stream.start()
         stream.awaitTermination()
     }
+
+
+    def fileSystemStreaming(): Unit =
+    {
+        stream.start()
+        stream.awaitTermination()
+    }
+
 }

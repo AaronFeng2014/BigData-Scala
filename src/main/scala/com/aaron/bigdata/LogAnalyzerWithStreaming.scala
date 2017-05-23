@@ -1,5 +1,6 @@
 package com.aaron.bigdata
 
+import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.dstream.ReceiverInputDStream
 
 /**
@@ -14,9 +15,16 @@ class LogAnalyzerWithStreaming extends LogAnalyzer
 
     override def analyzer(lines: ReceiverInputDStream[String]): Unit =
     {
-        println("接收到来自spark streaming的消息，内容是")
+        println("开始处理来自spark streaming的消息")
 
-        lines.foreachRDD((rdd) => println(rdd.take(10).take(10).foreach(println(_)).toString))
+        lines.foreachRDD(handleDStream _)
+
+        lines.flatMap(_.split(" ")).map((_, 1)).reduceByKey(_ + _).print()
     }
 
+
+    private[this] def handleDStream(rdd: RDD[String]): Unit =
+    {
+        rdd.foreach(print(_))
+    }
 }
