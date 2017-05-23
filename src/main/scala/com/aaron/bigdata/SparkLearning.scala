@@ -12,16 +12,18 @@ import org.apache.spark.sql.{DataFrame, SparkSession}
 object SparkLearning
 {
 
-    val jsonPath: String = "C:/Users/Aaron/Desktop/people.csv"
 
+    //val filePath = "spark-warehouse\\test.csv"
+    //-Dspark.master=spark://192.168.2.175:7077
 
     def main(args: Array[String]): Unit =
     {
-        System.setProperty("hadoop.home.dir", "D:\\Develop\\BigData\\hadoop-2.7.3")
+        System.setProperty("hadoop.home.dir", "D:\\develop\\大数据\\hadoop-2.7.3")
 
-        val session: SparkSession = org.apache.spark.sql.SparkSession.builder().appName("Spark Learning Test").getOrCreate()
+        val session: SparkSession = SparkSession.builder().master("spark://192.168.2.175:7077").appName("okay?").getOrCreate()
 
-        val dataFrame: DataFrame = session.sqlContext.read.csv(jsonPath)
+        //hadoop地址：hdfs://192.168.2.175:25555
+        val dataFrame: DataFrame = session.sqlContext.read.csv("hdfs://192.168.2.175:25555/home/aaron/hadoop-2.7.3/tmp/dfs/data/people.txt")
 
         dataFrame.show()
     }
