@@ -16,7 +16,7 @@ import scala.collection.mutable
 object LogAnalyzerDemo
 {
 
-    //val LOG_PATH: String = "hdfs://192.168.2.175:25555/home/aaron/hadoop-2.7.3/tmp/dfs/data/people.txt"
+    val LOG_PATH: String = "hdfs://192.168.2.175:25555/home/aaron/hadoopData/"
 
     val sparkContext: SparkContext = SparkContextHelper.getSparkContext("local[2]", "LogAnalyzer")
 
@@ -26,7 +26,7 @@ object LogAnalyzerDemo
 
     def main(args: Array[String]): Unit =
     {
-        queueStreaming()
+        fileSystemStreaming()
     }
 
 
@@ -43,9 +43,12 @@ object LogAnalyzerDemo
     }
 
 
+    /**
+      * 监控一个目录中的文件变动，暂时发现只能用于hdfs文件系统
+      */
     def fileSystemStreaming(): Unit =
     {
-        val result: DStream[String] = stream.textFileStream("D:\\")
+        val result: DStream[String] = stream.textFileStream(LOG_PATH)
 
         val analyzer: LogAnalyzer[String] = new LogAnalyzerWithStreaming[String]()
 
