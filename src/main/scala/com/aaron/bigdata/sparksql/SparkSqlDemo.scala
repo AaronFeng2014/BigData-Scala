@@ -1,5 +1,6 @@
 package com.aaron.bigdata.sparksql
 
+import com.aaron.bigdata.DataBaseHelper
 import org.apache.spark.sql.SparkSession
 
 /**
@@ -18,6 +19,13 @@ object SparkSqlDemo
 
     def main(args: Array[String]): Unit =
     {
+
+        fromJdbc()
+    }
+
+
+    def fromLocalFile(): Unit =
+    {
         val session = SparkSession.builder().master("local[2]").appName("SparkSql Demo").getOrCreate()
 
         val sqlContext = session.sqlContext
@@ -25,13 +33,32 @@ object SparkSqlDemo
         val dataFrame = sqlContext.read.json(PATH)
 
 
-        dataFrame.show()
+        dataFrame.createOrReplaceTempView("people")
 
-        dataFrame.groupBy("age").count().show()
+        val frame = sqlContext.sql("select name,age,address from people where age > 20 and age < 30")
 
-        dataFrame.filter(dataFrame.col("age").lt(25)).show()
-
-        dataFrame.printSchema()
-
+        frame.show()
     }
+
+
+    def fromJdbc(): Unit =
+    {
+        val session = SparkSession.builder().master("local[2]").appName("SparkSql Demo").getOrCreate()
+
+        val sqlContext = session.sqlContext
+
+        val df = sqlContext.read.jdbc(DataBaseHelper.MYSQL_URL, "config", DataBaseHelper.getMySqlProperties)
+
+        //创建一个视图，后面就可以像sql一样使用该视图
+        df.createOrReplaceTempView("config")
+
+        //按type列分组统计
+        df.groupBy("type").sum("type").as("总和").show()
+        val some = sqlContext.sql("select t.type, count(1) from config t group by t.type")
+
+        some.show()
+
+        //some.foreach(row => println(row.get(4)))
+    }
+
 }
