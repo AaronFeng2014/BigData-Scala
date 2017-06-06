@@ -20,7 +20,7 @@ object SparkSqlDemo
     def main(args: Array[String]): Unit =
     {
 
-        fromJdbc()
+        fromLocalFile()
     }
 
 
