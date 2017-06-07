@@ -1,9 +1,11 @@
 package com.aaron.bigdata
 
+import com.aaron.scala.kafka.KafkaProperty
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.dstream.DStream
+import org.apache.spark.streaming.kafka.KafkaUtils
 import org.apache.spark.streaming.{Duration, StreamingContext}
 
 import scala.collection.mutable
@@ -26,7 +28,7 @@ object LogAnalyzerDemo
 
     def main(args: Array[String]): Unit =
     {
-        fileSystemStreaming()
+        kafkaStreaming()
     }
 
 
@@ -89,5 +91,19 @@ object LogAnalyzerDemo
         }
 
     }
+
+
+    def kafkaStreaming(): Unit =
+    {
+        val kafkaParam: Map[String, String] = Map(
+            "zookeeper.connect" -> KafkaProperty.zookeeperAddress,
+            "group.id" -> "spark-streaming-consumer",
+            "zookeeper.connection.timeout.ms" -> "")
+
+        val kafka = KafkaUtils.createStream(stream, kafkaParam, Map(KafkaProperty.kafkaTopic -> 1), StorageLevel.MEMORY_ONLY)
+
+        kafka.print()
+    }
+
 
 }

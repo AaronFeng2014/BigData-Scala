@@ -1,5 +1,7 @@
 package com.aaron.scala.collections
 
+import scala.io.Source
+
 /**
   * scala集合之list练习
   *
@@ -59,5 +61,35 @@ object ListLearning
     private def showNumber(num: Int): Unit =
     {
         println(num)
+    }
+
+
+    def findMaxInList(list: List[Int]): Int =
+    {
+        list.reduce(Math.max)
+    }
+
+
+    def ttt =
+    {
+        val textPah = "spark-warehouse/data01.txt"
+
+
+        var index = 17690
+        val sql: StringBuffer = new StringBuffer()
+        Source.fromFile(textPah).getLines().foreach(code =>
+        {
+            val array: Array[String] = code.split(",")
+            index += 1
+            sql.append("INSERT INTO HTL_DELIVERY.T_MERCHANT_DISTRIBUTOR (ID, MERCHANTCODE, DISTRIBUTORCODE, DISTRIBUTORNAME, CHANNELCODE, SHOPNAME, CREATETIME) VALUES (" + index + ", '" + array(0) + "', '" + array(1) + "', 'TTM', 'ttm', '" + array(2) + "', sysdate);\n")
+        })
+
+        println(sql.toString)
+    }
+
+
+    def main(args: Array[String]): Unit =
+    {
+        ttt
     }
 }

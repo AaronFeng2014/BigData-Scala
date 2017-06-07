@@ -49,16 +49,25 @@ class ListLearningTest extends FunSuite with BeforeAndAfterEach
     }
 
 
-
     test("flatMap")
     {
-        val list1: List[Int] = List(3,5,9,12,20)
-        val list2: List[Int] = List(4,7,2)
-        val list3: List[Int] = List(3,5,1)
-        
-        val list:List[List[Int]] = List(list1,list2,list3)
+        val list1: List[Int] = List(3, 51, 9, 12, 20)
+        val list2: List[Int] = List(4, 7, 2)
+        val list3: List[Int] = List(3, 5, 1)
+
+        val list: List[List[Int]] = List(list1, list2, list3)
 
         println(ListLearning.flatMap(list))
+
+    }
+
+
+    test("findMaxInList")
+    {
+        val list: List[Int] = List(3, 5, 9, 12, 20)
+
+
+        println(ListLearning.findMaxInList(list))
 
     }
 
