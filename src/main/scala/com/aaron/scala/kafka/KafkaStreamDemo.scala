@@ -12,8 +12,8 @@ object KafkaStreamDemo
         val producer: MyKafkaProducer = new MyKafkaProducer()
         new Thread(producer, "消息生产者线程").start()
 
-        val consumer: MyKafkaConsumer = new MyKafkaConsumer()
-        new Thread(consumer, "消息消费者线程").start()
+       val consumer: MyKafkaConsumer = new MyKafkaConsumer()
+       new Thread(consumer, "消息消费者线程").start()
     }
 
 }

@@ -16,17 +16,13 @@ import org.apache.kafka.clients.consumer.ConsumerConfig
   */
 class MyKafkaConsumer extends Runnable
 {
-    val topic: String = "logStreaming"
-    val zkAddress: String = "logStreaming"
-
-
     val msgSendSuccessCallBack = new MessageSendSuccessListener
 
     val props: Properties = new Properties()
 
     props.put("zookeeper.connect", KafkaProperty.zookeeperAddress)
-    props.put("zookeeper.session.timeout.ms", "400")
-    props.put("zookeeper.sync.time.ms", "200")
+    props.put("zookeeper.session.timeout.ms", "10000")
+    props.put("zookeeper.sync.time.ms", "2000")
     props.put("auto.commit.interval.ms", "1000")
 
     props.put(ConsumerConfig.GROUP_ID_CONFIG, KafkaProperty.groupId)
@@ -45,8 +41,11 @@ class MyKafkaConsumer extends Runnable
     {
         while (true)
         {
+            /**
+              * 一次从主题中取出一个值
+              */
             val topicCountMap: util.HashMap[String, Integer] = new util.HashMap[String, Integer]()
-            topicCountMap.put(KafkaProperty.kafkaTopic, 2)
+            topicCountMap.put(KafkaProperty.kafkaTopic, 1)
 
             val result: util.Map[String, util.List[KafkaStream[Array[Byte], Array[Byte]]]] = consumer.createMessageStreams(topicCountMap)
 

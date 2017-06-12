@@ -1,5 +1,6 @@
 package com.aaron.scala.kafka
 
+import org.apache.commons.logging.{Log, LogFactory}
 import org.apache.kafka.clients.producer.{Callback, RecordMetadata}
 
 /**
@@ -9,8 +10,18 @@ import org.apache.kafka.clients.producer.{Callback, RecordMetadata}
   */
 class MessageSendSuccessListener extends Callback
 {
+    val log: Log = LogFactory.getLog("MessageSendSuccessListener")
+
+
     override def onCompletion(metadata: RecordMetadata, exception: Exception): Unit =
     {
-        println("message send success! and the message send to")
+        try
+        {
+            //log.info("message has been send successfully!\npartition: " + metadata.partition() + "\ntopic:" + metadata.topic())
+        }
+        catch
+        {
+            case _ => log.error(exception.printStackTrace())
+        }
     }
 }

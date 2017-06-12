@@ -8,11 +8,20 @@ package com.aaron.scala.kafka
 object KafkaProperty
 {
 
+    /**
+      * zookeeper地址
+      */
     val zookeeperAddress: String = "192.168.2.175:12181"
 
-    val kafkaTopic: String = "logStreaming"
+    /**
+      * topic
+      */
+    val kafkaTopic: String = "kafkaLearning"
 
-    val kafkaServiceAddress = "192.168.175:9029"
+    /**
+      * kafka单机伪集群
+      */
+    val kafkaServiceAddress = "192.168.2.175:9091,192.168.2.175:9092,192.168.2.175:9093,192.168.2.175:9094"
 
     val kafkaProducerBufferSize: Int = 1024 * 64
 
