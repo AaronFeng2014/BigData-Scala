@@ -29,4 +29,52 @@ object DataBaseHelper
 
         properties
     }
+
+
+    object MySql
+    {
+        val URL = "jdbc:mysql://192.168.2.175:3306/disconf"
+
+        val DRIVER_CLASS = "com.mysql.jdbc.Driver"
+
+
+        def getConnectionProperties(): Properties =
+        {
+            val properties = new Properties()
+
+            /**
+              * 用户名的key是user，而不是username
+              */
+            properties.put("user", "root")
+            properties.put("password", "fangcang")
+            properties.put("driver", MYSQL_DRIVER)
+
+            properties
+        }
+    }
+
+
+    object Oracle
+    {
+        val URL = "jdbc:mysql://192.168.2.175:3306/disconf"
+
+        val DRIVER_CLASS = "com.mysql.jdbc.Driver"
+
+
+        def getConnectionProperties(): Properties =
+        {
+            val properties = new Properties()
+
+            /**
+              * 用户名的key是user，而不是username
+              */
+            properties.put("user", "root")
+            properties.put("password", "fangcang")
+            properties.put("driver", MYSQL_DRIVER)
+
+            properties
+        }
+    }
+
+
 }
