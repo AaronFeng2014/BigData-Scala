@@ -41,7 +41,7 @@ class MyKafkaProducer extends Runnable
         //可选的属性配置
         config.put(ProducerConfig.SEND_BUFFER_CONFIG, KafkaProperty.kafkaProducerBufferSize.toString)
         config.put(ProducerConfig.RETRIES_CONFIG, KafkaProperty.reconnectionTimes.toString)
-        config.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "3000")
+        config.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "10000")
 
         config
     }
@@ -54,11 +54,11 @@ class MyKafkaProducer extends Runnable
         {
             index = index + 1
             val value = "Kafka 测试--test" + index
-            val msg = new ProducerRecord[String, String](KafkaProperty.kafkaTopic,  value)
+            val msg = new ProducerRecord[String, String](KafkaProperty.kafkaTopic, value)
 
             producer.send(msg, msgSendSuccessCallBack)
 
-            //log.info("发送消息为：" + value)
+            Thread.sleep(200)
         }
     }
 

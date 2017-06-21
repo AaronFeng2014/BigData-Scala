@@ -8,6 +8,8 @@ import kafka.javaapi.consumer.ConsumerConnector
 import kafka.message.MessageAndMetadata
 import org.apache.kafka.clients.consumer.ConsumerConfig
 
+import scala.collection.JavaConversions._
+
 
 /**
   * @description 一句话描述该文件的用途
@@ -39,30 +41,37 @@ class MyKafkaConsumer extends Runnable
 
     def receiveMessage(): Unit =
     {
-        while (true)
+
+        val topicCountMap: util.HashMap[String, Integer] = new util.HashMap[String, Integer]()
+
+        /**
+          * 该map对象的value表示消费者的线程数量，key表示消费的主题
+          */
+        topicCountMap.put(KafkaProperty.kafkaTopic, 1)
+
+        val result: util.Map[String, util.List[KafkaStream[Array[Byte], Array[Byte]]]] = consumer.createMessageStreams(topicCountMap)
+
+        val kafkaStreamList: util.List[KafkaStream[Array[Byte], Array[Byte]]] = result.get(KafkaProperty.kafkaTopic)
+
+        for (kafkaStream: KafkaStream[Array[Byte], Array[Byte]] <- kafkaStreamList)
         {
-            /**
-              * 一次从主题中取出一个值
-              */
-            val topicCountMap: util.HashMap[String, Integer] = new util.HashMap[String, Integer]()
-            topicCountMap.put(KafkaProperty.kafkaTopic, 1)
-
-            val result: util.Map[String, util.List[KafkaStream[Array[Byte], Array[Byte]]]] = consumer.createMessageStreams(topicCountMap)
-
-            val kafkaStream: KafkaStream[Array[Byte], Array[Byte]] = result.get(KafkaProperty.kafkaTopic).get(0)
-
-            val consumerIterator: ConsumerIterator[Array[Byte], Array[Byte]] = kafkaStream.iterator()
-
-            while (consumerIterator.hasNext())
+            new Thread()
             {
-                val messageData: MessageAndMetadata[Array[Byte], Array[Byte]] = consumerIterator.next()
+                override def run(): Unit =
+                {
+                    val consumerIterator: ConsumerIterator[Array[Byte], Array[Byte]] = kafkaStream.iterator()
 
-                val byteArray: Array[Byte] = messageData.message()
+                    while (consumerIterator.hasNext())
+                    {
+                        val messageData: MessageAndMetadata[Array[Byte], Array[Byte]] = consumerIterator.next()
 
-                println("接收到来自Kafka的消息，内容是：" + new String(byteArray))
-            }
+                        val byteArray: Array[Byte] = messageData.message()
+
+                        println("接收到来自Kafka的消息，内容是：" + new String(byteArray))
+                    }
+                }
+            }.start()
+
         }
-
-
     }
 }

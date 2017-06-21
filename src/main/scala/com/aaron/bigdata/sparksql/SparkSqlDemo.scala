@@ -47,7 +47,7 @@ object SparkSqlDemo
 
         val sqlContext = session.sqlContext
 
-        val df = sqlContext.read.jdbc(DataBaseHelper.MYSQL_URL, "config", DataBaseHelper.getMySqlProperties)
+        val df = sqlContext.read.jdbc(DataBaseHelper.MySql.URL, "config", DataBaseHelper.MySql.getConnectionProperties())
 
         //创建一个视图，后面就可以像sql一样使用该视图
         df.createOrReplaceTempView("config")

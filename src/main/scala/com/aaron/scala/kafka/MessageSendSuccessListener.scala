@@ -17,11 +17,11 @@ class MessageSendSuccessListener extends Callback
     {
         try
         {
-            //log.info("message has been send successfully!\npartition: " + metadata.partition() + "\ntopic:" + metadata.topic())
+            log.info("message has been send successfully!\npartition: " + metadata.partition() + "\ntopic:" + metadata.topic())
         }
         catch
         {
-            case _ => log.error(exception.printStackTrace())
+            case _: Exception => log.error(exception.printStackTrace())
         }
     }
 }

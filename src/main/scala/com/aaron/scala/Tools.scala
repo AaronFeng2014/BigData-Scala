@@ -13,12 +13,25 @@ import scala.io.Source
 object Tools
 {
 
-    val dataPath: String = "spark-warehouse/mapping.txt"
+    val dataPath: String = "spark-warehouse/hangban.txt"
 
 
     def main(args: Array[String]): Unit =
     {
-        convertText2Sql()
+        convertText22Sql()
+    }
+
+
+    def convertText22Sql(): Unit =
+    {
+        val sqlArray: StringBuilder = new StringBuilder
+        Source.fromFile(dataPath, "UTF-8").getLines().map(_.split("\t")) foreach (line =>
+        {
+            sqlArray.append("MERGE INTO HTL_DELIVERY.T_MERCHANT_DISTRIBUTOR t USING (SELECT '"+line(0)+"' AS merchantCode, '"+line(1)+"' AS distributorCode FROM dual) d ON (t.MERCHANTCODE = d.merchantCode AND t.DISTRIBUTORCODE = d.distributorCode) WHEN NOT MATCHED THEN INSERT (t.MERCHANTCODE,t.DISTRIBUTORCODE,t.DISTRIBUTORNAME,t.CHANNELCODE,t.SHOPNAME,t.CREATETIME) VALUES ('"+line(0)+"','"+line(1)+"','"+line(2)+"','hangban','"+line(3)+"',sysdate);").append("\n")
+        })
+
+
+        save2File(sqlArray)
     }
 
 
@@ -27,7 +40,7 @@ object Tools
         val sqlArray: StringBuilder = new StringBuilder
         Source.fromFile(dataPath, "UTF-8").getLines().map(_.split("\t")) foreach (line =>
         {
-            sqlArray.append("MERGE INTO HTL_PTR.T_HUB_MAP_HOTEL t USING (SELECT "+line(0)+" AS hotelId FROM dual) d ON (t.HOTELID = d.hotelId and t.channelCode = 'hub_xmd') WHEN MATCHED THEN UPDATE SET t.PARTNERHOTELID = "+line(1)+", t.PARTNERHOTELNAME='"+line(2)+"', t.PARTNERCITYCODE='"+line(3)+"', t.PARTNERCITYNAME='"+line(4)+"', t.PARTNERADDR='"+line(5)+"';").append("\n")
+            sqlArray.append("MERGE INTO HTL_PTR.T_HUB_MAP_HOTEL t USING (SELECT " + line(0) + " AS hotelId FROM dual) d ON (t.HOTELID = d.hotelId and t.channelCode = 'hub_xmd') WHEN MATCHED THEN UPDATE SET t.PARTNERHOTELID = " + line(1) + ", t.PARTNERHOTELNAME='" + line(2) + "', t.PARTNERCITYCODE='" + line(3) + "', t.PARTNERCITYNAME='" + line(4) + "', t.PARTNERADDR='" + line(5) + "';").append("\n")
         })
 
 
@@ -53,6 +66,19 @@ object Tools
         {
             stream.close()
         }
+    }
+
+
+    def map(): Unit =
+    {
+        val sqlArray: StringBuilder = new StringBuilder
+        Source.fromFile(dataPath, "UTF-8").getLines().foreach(line =>
+        {
+            sqlArray.append("'").append(line).append("',")
+        })
+
+        sqlArray.setLength(sqlArray.length - 1)
+        save2File(sqlArray)
     }
 
 }
