@@ -27,6 +27,9 @@ object WangYiCloudMusic
 
     def main(args: Array[String]): Unit =
     {
+        val start: Long = System.currentTimeMillis()
+
+        println("正在获取数据，请稍后")
 
         val document: Document = Jsoup.connect(beginUrl).get()
 
@@ -34,13 +37,15 @@ object WangYiCloudMusic
         val element: Element = document.body().getElementById("m-artist-box")
 
         findSinger(element)
+
+        println("爬取耗时：" + (System.currentTimeMillis() - start) + "毫秒")
     }
 
 
     def findSinger(singerElement: Element): Unit =
     {
         //热门歌手
-        val singerList: Elements = singerElement.getElementsByClass("u-cover-5")
+        val singerList: Elements = singerElement.getElementsByTag("li")
 
         val iterator: util.Iterator[Element] = singerList.iterator()
 
@@ -115,6 +120,12 @@ object WangYiCloudMusic
         val musicDetailPage: Document = Jsoup.connect(musicUrl).headers(header).data(formData).post()
 
         val content: Option[Any] = JSON.parseFull(musicDetailPage.text())
+
+        if (!content.isInstanceOf[Some[Any]])
+        {
+            println("格式错误" + content)
+            return
+        }
 
         content.get match
         {
