@@ -27,3 +27,9 @@ libraryDependencies += "org.apache.spark" % "spark-sql_2.11" % "2.1.0"
 libraryDependencies += "org.apache.spark" % "spark-mllib_2.11" % "2.1.0"
 
 libraryDependencies += "org.jsoup" % "jsoup" % "1.10.1"
+
+libraryDependencies += "redis.clients" % "jedis" % "2.9.0"
+
+libraryDependencies += "com.alibaba" % "fastjson" % "1.2.35"
+
+libraryDependencies += "org.json4s" % "json4s-jackson_2.11" % "3.5.2"
