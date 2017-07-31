@@ -12,6 +12,24 @@ import scala.io.Source
 object ListLearning
 {
 
+    def main(args: Array[String]): Unit =
+    {
+        val source = Source.fromFile("spark-warehouse/data01.txt")
+
+        val result = new StringBuilder()
+        var index = 22118
+        source.getLines().foreach(line =>
+        {
+            val array = line.split("\t")
+            index += 1
+            //result.append("INSERT INTO HTL_DELIVERY.T_MERCHANT_DISTRIBUTOR (ID, MERCHANTCODE, DISTRIBUTORCODE, DISTRIBUTORNAME, CHANNELCODE, SHOPNAME, CREATETIME) VALUES (" + index + ", '" + array(2) + "', '" + array(0) + "', '" + array(5) + "', 'tongcheng', '" + array(3) + "', sysdate);\n")
+            result.append("INSERT INTO HTLPRO.T_HTLPRO_MERCHANT_SALECHANNEL (MERCHANTCODE, SALECHANNELID, SALECHANNELCODE, ISSHOW, SHOWCURRENCY) VALUES ('" + array(2) + "', 20, 'tongcheng', 1, 1);\n")
+        })
+
+        println(result.toString())
+    }
+
+
     /**
       * list遍历方式之一：foreach遍历
       *
@@ -88,8 +106,4 @@ object ListLearning
     }
 
 
-    def main(args: Array[String]): Unit =
-    {
-        ttt
-    }
 }
