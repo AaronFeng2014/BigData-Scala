@@ -1,11 +1,14 @@
 package com.aaron.bigdata
 
+import java.util
+
 import com.aaron.scala.kafka.KafkaProperty
+import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.dstream.DStream
-import org.apache.spark.streaming.kafka.KafkaUtils
+import org.apache.spark.streaming.kafka010._
 import org.apache.spark.streaming.{Duration, StreamingContext}
 
 import scala.collection.mutable
@@ -20,7 +23,7 @@ object LogAnalyzerDemo
 
     val LOG_PATH: String = "hdfs://192.168.2.175:25555/home/aaron/hadoopData/"
 
-    val sparkContext: SparkContext = SparkContextHelper.getSparkContext("local[2]", "LogAnalyzer")
+    val sparkContext: SparkContext = SparkContextHelper.getSparkContext("local[10]", "LogAnalyzer")
 
 
     val stream: StreamingContext = new StreamingContext(sparkContext, Duration(3000))
@@ -95,14 +98,42 @@ object LogAnalyzerDemo
 
     def kafkaStreaming(): Unit =
     {
-        val kafkaParam: Map[String, String] = Map(
-            "zookeeper.connect" -> KafkaProperty.zookeeperAddress,
-            "group.id" -> "spark-streaming-consumer",
-            "zookeeper.connection.timeout.ms" -> "")
 
-        val kafka = KafkaUtils.createStream(stream, kafkaParam, Map(KafkaProperty.kafkaTopic -> 1), StorageLevel.MEMORY_ONLY)
+        val paramMap = new util.HashMap[String, Object]()
+        paramMap.putIfAbsent(ConsumerConfig.GROUP_ID_CONFIG, "1")
+        paramMap.putIfAbsent(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaProperty.kafkaServiceAddress)
+        paramMap.putIfAbsent(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer")
+        paramMap.putIfAbsent(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer")
+        paramMap.putIfAbsent(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
 
-        kafka.print()
+
+        val list: java.util.List[String] = new util.ArrayList[String]()
+        list.add(KafkaProperty.kafkaTopic)
+        val consumerStrategy = ConsumerStrategies.Subscribe[String, String](list, paramMap)
+
+        val kafka = KafkaUtils.createDirectStream(stream, LocationStrategies.PreferConsistent, consumerStrategy)
+
+        /*kafka.foreachRDD(rdd =>
+        {
+            rdd.foreach(record =>
+            {
+                print(record.value())
+            })
+        })*/
+
+        kafka.foreachRDD(rdd =>
+        {
+            rdd.foreachPartition(record =>
+            {
+                while (record.hasNext)
+                {
+                    println(record.next())
+                }
+            })
+        })
+
+        stream.start()
+        stream.awaitTermination()
     }
 
 

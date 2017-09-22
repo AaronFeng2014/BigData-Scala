@@ -171,7 +171,7 @@ object Tools
         {
             val data = JSON.toJSONString(areaData, SerializerFeature.WriteNullBooleanAsFalse)
             stringBuilder.append(data).append("\n")
-            pipelined.hset("cn:" + areaData.getProvinceCode, areaData.getCityCode, data)
+            pipelined.hset("cn:" + areaData.provinceCode, areaData.cityCode, data)
         })
 
         pipelined.sync()

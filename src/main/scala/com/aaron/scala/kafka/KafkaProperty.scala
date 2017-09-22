@@ -11,17 +11,17 @@ object KafkaProperty
     /**
       * zookeeper地址
       */
-    val zookeeperAddress: String = "192.168.2.175:12181"
+    val zookeeperAddress: String = "192.168.1.150:12181"
 
     /**
       * topic
       */
-    val kafkaTopic: String = "kafkaLearning"
+    val kafkaTopic: String = "hotel_api_log"
 
     /**
       * kafka单机伪集群
       */
-    val kafkaServiceAddress = "192.168.2.175:9091,192.168.2.175:9092,192.168.2.175:9093,192.168.2.175:9094"
+    val kafkaServiceAddress = "192.168.1.150:9091,192.168.1.150:9092,192.168.1.150:9093"
 
     val kafkaProducerBufferSize: Int = 1024 * 64
 
