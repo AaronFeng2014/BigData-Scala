@@ -38,11 +38,13 @@ object ExactSample
           */
         var result: RDD[(String, Double)] = data.sampleByKey(withReplacement = false, partitions)
 
+        println("==============简单的分层抽样===============")
+        result.collect().foreach(println)
         /**
           * 精确抽样： 可以提供高达99.99的置信度
           */
         result = data.sampleByKeyExact(withReplacement = false, partitions)
-
+        println("==============精确的分层抽样===============")
         result.collect().foreach(println)
     }
 }
