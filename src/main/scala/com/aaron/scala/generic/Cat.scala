@@ -3,10 +3,12 @@ package com.aaron.scala.generic
 /**
   * @description 一句话描述该文件的用途
   * @author FengHaixin
-  * @date 2017-04-05
+  * @date 2017-10-04
   */
-abstract class Animal
+class Cat extends Animal
 {
-
-    def sayName(): Unit
+    override def sayName(): Unit =
+    {
+        println("")
+    }
 }

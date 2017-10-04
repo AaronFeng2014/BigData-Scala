@@ -3,13 +3,12 @@ package com.aaron.scala.generic
 /**
   * @description 一句话描述该文件的用途
   * @author FengHaixin
-  * @date 2017-04-05
+  * @date 2017-10-04
   */
-class People extends RunAction[Animal, Animal]
+class Dog extends Animal
 {
-    override def run(a: Animal): Animal =
+    override def sayName(): Unit =
     {
-
-        new Cat
+        println("my name is dog")
     }
 }
