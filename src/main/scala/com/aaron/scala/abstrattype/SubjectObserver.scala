@@ -52,6 +52,9 @@ object PlaySubjectObserver extends SubjectObserver
     class PlaySubject extends Subject
     {
 
+        var name = "feg"
+
+
         def test(): Unit =
         {
             notifyObserver()
@@ -63,7 +66,8 @@ object PlaySubjectObserver extends SubjectObserver
     {
         override def update(s: S): Unit =
         {
-            println("test")
+            println(s.getClass)
+            println("=========")
         }
     }
 
@@ -79,6 +83,22 @@ object AbstractType
         playSubject.addObserver(new PlayObserver)
 
         playSubject.notifyObserver()
+
+        ppp(t)
+    }
+
+
+    def ppp(callBack: () => Unit): Unit =
+    {
+        println("before callBack")
+        callBack
+        println("after callBack")
+    }
+
+
+    def t(): Unit =
+    {
+        println("test")
     }
 }
 
