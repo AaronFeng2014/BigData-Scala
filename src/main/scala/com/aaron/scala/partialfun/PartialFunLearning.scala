@@ -66,5 +66,11 @@ object PartialFunLearning
     {
         println(str.apply(10))
         println(str.apply(3))
+        println(intToString.apply(3))
+
+        if (intToString_2.isDefinedAt(3))
+        {
+            println(intToString_2.apply(3))
+        }
     }
 }

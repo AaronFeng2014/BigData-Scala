@@ -55,7 +55,7 @@ object MethodParameterLearning
         override def apply(v1: Int, v2: Long): String = "gfvc666666666"
     }
 
-    val ssss = (a: Int) => a * a
+    val ssss: Int => Int = (a: Int) => a * a
 
 
     /**
@@ -101,10 +101,12 @@ object MethodParameterLearning
 
     /**
       * 限定类型
+      *
       * @param flyable
       * @tparam Flyable
       */
-    def canFly[Flyable <:{def fly():Unit}](flyable : => Flyable): Unit =
+    def canFly[Flyable <:
+    {def fly() : Unit}](flyable: => Flyable): Unit =
     {
         flyable.fly()
     }

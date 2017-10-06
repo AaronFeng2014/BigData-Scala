@@ -1,6 +1,7 @@
 package com.aaron.scala.abstrattype
 
 import com.aaron.scala.abstrattype.PlaySubjectObserver.{PlayObserver, PlaySubject}
+import com.aaron.scala.generic.Student
 
 /**
   * @description 一句话描述该文件的用途
@@ -51,6 +52,10 @@ object PlaySubjectObserver extends SubjectObserver
 
     class PlaySubject extends Subject
     {
+
+        //存在类型
+        val s: List[_] forSome
+        {type T} = List()
 
         var name = "feg"
 

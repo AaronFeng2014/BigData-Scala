@@ -8,18 +8,19 @@ package com.aaron.scala.implicits
 object StringUtils
 {
 
-    implicit val a : String = "test"
+    implicit val a: String = "test"
+
 
     def append(implicit appendString: String): String =
     {
-        "appendString" + appendString
+        "appendString " + appendString
     }
 
 
     def main(args: Array[String]): Unit =
     {
-        val name :String = "feng haixin "
+        val name: String = "feng haixin "
 
-        println(append)
+        println(append("grhh"))
     }
 }
