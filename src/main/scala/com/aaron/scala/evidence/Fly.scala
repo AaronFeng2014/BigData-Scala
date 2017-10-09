@@ -9,5 +9,5 @@ import com.aaron.scala.implicits.api.People
   */
 trait Fly[+A]
 {
-    def fly(implicit evidence: <:<[A, People]): Map[String, A]
+    def fly(implicit evidence: <:<[A, ImplicitEvidenceSample]): Map[String, A]
 }

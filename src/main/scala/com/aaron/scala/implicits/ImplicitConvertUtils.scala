@@ -18,8 +18,9 @@ object ImplicitConvertUtils
 
     def main(args: Array[String]): Unit =
     {
-        val monkey : Monkey = new Monkey
+        val monkey: Monkey = new Monkey
 
+        //Monkey并没有run方法，此时编译器会在当前作用域内查找合适的隐私转换
         monkey.run()
     }
 }
