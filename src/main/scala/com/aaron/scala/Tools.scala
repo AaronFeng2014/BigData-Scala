@@ -2,12 +2,7 @@ package com.aaron.scala
 
 import java.io.{FileOutputStream, OutputStream}
 
-import com.aaron.AreaData
-import com.alibaba.fastjson.JSON
-import com.alibaba.fastjson.serializer.SerializerFeature
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig
-import redis.clients.jedis.{Jedis, JedisPool}
-
+//import com.aaron.AreaData
 import scala.io.Source
 
 
@@ -96,7 +91,7 @@ object Tools
     var city: String = ""
     var cityCode: String = ""
 
-    var areaDataList: List[AreaData] = List()
+    //var areaDataList: List[AreaData] = List()
 
 
     def parseAreaData(): Unit =
@@ -120,12 +115,12 @@ object Tools
             //区域
             if (line.length == 6)
             {
-                val areaData: AreaData = new AreaData("China", "中国", provinceCode, province, cityCode, city, line(4), line(5))
-                areaDataList = areaDataList :+ areaData
+                //val areaData: AreaData = new AreaData("China", "中国", provinceCode, province, cityCode, city, line(4), line(5))
+                //areaDataList = areaDataList :+ areaData
             }
         })
 
-        save2Redis(areaDataList)
+        //save2Redis(areaDataList)
     }
 
 
@@ -133,11 +128,11 @@ object Tools
     {
         Source.fromFile("spark-warehouse/oversea.txt", "UTF-8").getLines().map(_.split("\t")) foreach (line =>
         {
-            val areaData: AreaData = new AreaData(line(6), line(5), "", "", line(0), line(1), "", "")
-            areaDataList = areaDataList :+ areaData
+            //val areaData: AreaData = new AreaData(line(6), line(5), "", "", line(0), line(1), "", "")
+            //areaDataList = areaDataList :+ areaData
         })
 
-        save2Redis(areaDataList)
+        //save2Redis(areaDataList)
     }
 
 
@@ -155,7 +150,7 @@ object Tools
       *
       * @param areaDataList List：所有地区信息组合的list
       */
-    def save2Redis(areaDataList: List[AreaData]): Unit =
+    /*def save2Redis(areaDataList: List[AreaData]): Unit =
     {
 
 
@@ -178,7 +173,7 @@ object Tools
         jedis.close()
         save2File(stringBuilder)
 
-    }
+    }*/
 
 
 }
