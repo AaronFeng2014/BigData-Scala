@@ -15,6 +15,9 @@ object TypeErasureSample
     implicit object DoubleMaker
 
 
+    implicit object DoubleMakers
+
+
     def typeErasure(param: List[Int])(implicit p: IntMaker.type): Unit =
     {
         println("========Int========")
@@ -23,6 +26,13 @@ object TypeErasureSample
 
 
     def typeErasure(param: List[Double])(implicit p: DoubleMaker.type): Unit =
+    {
+        println("========Double========")
+        param.foreach(println(_))
+    }
+
+
+    def typeErasure(param: List[String])(implicit p: DoubleMakers.type): Unit =
     {
         println("========Double========")
         param.foreach(println(_))
@@ -49,6 +59,8 @@ object TypeErasureSample
     {
 
         typeErasure(List(1, 2, 4, 2, 6))
+
+        typeErasure(List("hello", "world"))
 
         typeErasure(List(1.toDouble, 2.toDouble, 4.toDouble, 2.toDouble, 6.toDouble))
     }

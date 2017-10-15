@@ -1,5 +1,7 @@
 package com.aaron.scala.implicits
 
+import com.aaron.scala.implicits.ImplicitUtils.ImplicitUtils
+
 /**
   * @description 一句话描述该文件的用途
   * @author FengHaixin
@@ -36,7 +38,7 @@ class B
 
 class C
 {
-    def b(): Unit =
+    def c(): Unit =
     {
         println("c")
     }
@@ -60,7 +62,15 @@ object ImplicitConvertSample
 
         a.a()
 
-        a.b()
+        /**
+          * a类中并没有c()方法，因此此处有一个隐式转换忙把啊类型转换成c类型
+          * 所以a才可以调用c类中方法
+          */
+        a.c()
+
+        val b = new B()
+
+        println(b --> a)
 
 
     }
