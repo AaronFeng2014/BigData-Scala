@@ -14,7 +14,7 @@ import org.apache.spark.rdd.RDD
   * @author FengHaixin
   * @date 2017-10-17
   */
-object BayesSample
+object NaiveBayesSample
 {
 
     def main(args: Array[String]): Unit =
