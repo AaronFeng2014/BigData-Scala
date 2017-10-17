@@ -27,6 +27,10 @@ object BayesSample
             LabeledPoint(parts(0).toDouble, Vectors.dense(parts(1).split(" ") map (_.toDouble)))
         })
 
+        /**
+          * 把数据分为训练数据和测试数据
+          * 训练数据用于训练模型，测试数据用于测试训练出来的模型的正确性
+          */
         val res: Array[RDD[LabeledPoint]] = rdd.randomSplit(Array(0.7, 0.3), seed = 11L)
 
         val model: NaiveBayesModel = NaiveBayes.train(res(0), lambda = 0.7)
