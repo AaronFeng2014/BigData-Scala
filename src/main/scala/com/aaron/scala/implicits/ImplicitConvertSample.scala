@@ -1,6 +1,6 @@
 package com.aaron.scala.implicits
 
-import com.aaron.scala.implicits.ImplicitUtils.ImplicitUtils
+import com.aaron.scala.implicits.ImplicitUtils._
 
 /**
   * @description 一句话描述该文件的用途

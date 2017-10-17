@@ -31,6 +31,6 @@ libraryDependencies += "redis.clients" % "jedis" % "2.9.0"
 
 libraryDependencies += "com.alibaba" % "fastjson" % "1.2.35"
 
-libraryDependencies += "org.json4s" % "json4s-jackson_2.11" % "3.5.3"
+//libraryDependencies += "org.json4s" % "json4s-jackson_2.11" % "3.5.3"
 
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % "2.9.1"
