@@ -23,11 +23,17 @@ object SparkContextHelper
 
     val LOCAL_MODEL: String = "local[2]"
 
-    System.setProperty("hadoop.home.dir", "D:\\develop\\大数据\\hadoop-2.7.3")
+    System.setProperty("hadoop.home.dir", "C:\\pkfare\\develop\\大数据\\hadoop-2.7.3")
 
 
     def getSparkContext(master: String, taskName: String): SparkContext =
     {
-        SparkSession.builder().master(master).appName(taskName).getOrCreate().sparkContext
+        getSparkSession(master, taskName).sparkContext
+    }
+
+
+    def getSparkSession(master: String, taskName: String): SparkSession =
+    {
+        SparkSession.builder().master(master).appName(taskName).getOrCreate()
     }
 }
