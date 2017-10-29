@@ -4,12 +4,12 @@ import java.util
 
 import com.aaron.scala.kafka.KafkaProperty
 import org.apache.kafka.clients.consumer.ConsumerConfig
-import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.{SQLContext, SparkSession}
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.kafka010._
-import org.apache.spark.streaming.{Duration, StreamingContext}
+import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 import scala.collection.mutable
 
@@ -23,10 +23,10 @@ object LogAnalyzerDemo
 
     val LOG_PATH: String = "hdfs://192.168.2.175:25555/home/aaron/hadoopData/"
 
-    val sparkContext: SparkContext = SparkContextHelper.getSparkContext("local[10]", "LogAnalyzer")
+    val sparkSession: SparkSession = SparkContextHelper.getSparkSession("local[10]", "LogAnalyzer")
 
 
-    val stream: StreamingContext = new StreamingContext(sparkContext, Duration(3000))
+    val stream: StreamingContext = new StreamingContext(sparkSession.sparkContext, Seconds(10))
 
 
     def main(args: Array[String]): Unit =
@@ -102,39 +102,76 @@ object LogAnalyzerDemo
         val paramMap = new util.HashMap[String, Object]()
         paramMap.putIfAbsent(ConsumerConfig.GROUP_ID_CONFIG, "1")
         paramMap.putIfAbsent(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KafkaProperty.kafkaServiceAddress)
-        paramMap.putIfAbsent(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer")
-        paramMap.putIfAbsent(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer")
-        paramMap.putIfAbsent(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
+        paramMap.putIfAbsent(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer")
+        paramMap.putIfAbsent(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.ByteArrayDeserializer")
+        /**
+          * earliest
+          * latest
+          * none
+          */
+        paramMap.putIfAbsent(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest")
+        paramMap.putIfAbsent(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, java.lang.Boolean.FALSE)
 
 
         val list: java.util.List[String] = new util.ArrayList[String]()
         list.add(KafkaProperty.kafkaTopic)
-        val consumerStrategy = ConsumerStrategies.Subscribe[String, String](list, paramMap)
+        val consumerStrategy = ConsumerStrategies.Subscribe[String, Array[Byte]](list, paramMap)
 
-        val kafka = KafkaUtils.createDirectStream(stream, LocationStrategies.PreferConsistent, consumerStrategy)
+        val kafka = KafkaUtils.createDirectStream[String, Array[Byte]](stream, LocationStrategies.PreferConsistent, consumerStrategy)
 
-        /*kafka.foreachRDD(rdd =>
-        {
-            rdd.foreach(record =>
-            {
-                print(record.value())
-            })
-        })*/
+
+        kafka.start()
 
         kafka.foreachRDD(rdd =>
         {
-            rdd.foreachPartition(record =>
+            if (!rdd.isEmpty())
             {
-                while (record.hasNext)
+
+                val json = rdd.map[String](record =>
                 {
-                    println(record.next())
-                }
-            })
+                    val bytes: Array[Byte] = record.value()
+                    new String(bytes, "UTF-8")
+
+                })
+
+                sql(json)
+            }
         })
+
+        /*  kafka.window(Seconds(10)).foreachRDD(rdd =>
+          {
+              println("10秒访问量====>" + rdd.count())
+          })*/
 
         stream.start()
         stream.awaitTermination()
     }
 
+
+    val sqlContext: SQLContext = sparkSession.sqlContext
+
+
+    def sql(content: RDD[String]): Unit =
+    {
+
+        import sqlContext.implicits._
+
+        val dataSet = sqlContext.createDataset[String](content)
+
+        val dataFrame = sqlContext.read.json(dataSet)
+
+        dataFrame.cache()
+
+        dataFrame.createOrReplaceTempView("visitLog")
+
+        val select = sqlContext.sql("select a.methodName, count(1) as total from visitLog a group by a.methodName")
+
+
+        //聚合结果，否则结果是散的
+        val result = select.collect()
+
+        println("--------------> 输出结果<---------------------------")
+        result.foreach(row => println(row))
+    }
 
 }

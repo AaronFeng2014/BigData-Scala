@@ -35,7 +35,7 @@ object SparkSqlDemo
 
         dataFrame.createOrReplaceTempView("people")
 
-        val frame = sqlContext.sql("select name,age,address from people where age > 20 and age < 30")
+        val frame = sqlContext.sql("select a.name,a.age,a.address from people  a where age > 20 and age < 30")
 
         frame.show()
     }

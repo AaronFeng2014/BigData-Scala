@@ -16,7 +16,7 @@ object KafkaProperty
     /**
       * topic
       */
-    val kafkaTopic: String = "hotel_api_log"
+    val kafkaTopic: String = "hotel-api-log-data"
 
     /**
       * kafka单机伪集群
