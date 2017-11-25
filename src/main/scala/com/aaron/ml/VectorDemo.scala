@@ -33,7 +33,7 @@ object VectorDemo
           **/
         val sparseVector = Vectors.sparse(120, Array(1, 4, 8), Array(2, 1, 9))
 
-        val sparkContext: SparkContext = SparkContextHelper.getSparkContext("local[2]", "mlLibDemo")
+        val sparkContext: SparkContext = SparkContextHelper.getSparkSession("local[2]", "mlLibDemo").sparkContext
 
 
         val rdd: RDD[Vector] = sparkContext.textFile("spark-warehouse/data.txt").map(_.split(",")).map(line => Vectors.dense(line.map(_.toDouble)))
@@ -58,7 +58,7 @@ object VectorDemo
 
     def relationAnalyze(): Unit =
     {
-        val sparkContext: SparkContext = SparkContextHelper.getSparkContext("local[2]", "mlLibDemo")
+        val sparkContext: SparkContext = SparkContextHelper.getSparkSession("local[2]", "mlLibDemo").sparkContext
 
         val x: RDD[Double] = sparkContext.makeRDD((2 to 20 by 2).map(_.toDouble))
 

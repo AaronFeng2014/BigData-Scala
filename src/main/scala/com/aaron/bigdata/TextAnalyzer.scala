@@ -25,7 +25,7 @@ object TextAnalyzer
 
     def main(args: Array[String]): Unit =
     {
-        val sc: SparkContext = SparkContextHelper.getSparkContext(SparkContextHelper.LOCAL_MODEL, "logInfoTextAnalyzer")
+        val sc: SparkContext = SparkContextHelper.getSparkSession(SparkContextHelper.LOCAL_MODEL, "logInfoTextAnalyzer").sparkContext
 
         val rdd: RDD[String] = sc.textFile(logPath)
 

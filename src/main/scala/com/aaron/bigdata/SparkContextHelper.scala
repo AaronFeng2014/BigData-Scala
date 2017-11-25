@@ -1,6 +1,5 @@
 package com.aaron.bigdata
 
-import org.apache.spark.SparkContext
 import org.apache.spark.sql.SparkSession
 
 /**
@@ -21,17 +20,22 @@ object SparkContextHelper
 
     //session.sparkContext.addJar("D:\\Code\\GitHub\\BigData-Scala\\classes\\artifacts\\bigdata_scala_jar\\bigdata-scala.jar")
 
+    val remoteSparkMaster = "spark://192.168.1.103:7077"
+    val remoteHdfsPath = "hdfs://192.168.1.103:9000"
+
     val LOCAL_MODEL: String = "local[2]"
 
-    System.setProperty("hadoop.home.dir", "C:\\pkfare\\develop\\大数据\\hadoop-2.7.3")
+    System.setProperty("hadoop.home.dir", "D:\\develop\\BigData\\hadoop-2.7.3")
 
 
-    def getSparkContext(master: String, taskName: String): SparkContext =
-    {
-        getSparkSession(master, taskName).sparkContext
-    }
-
-
+    /**
+      * 获取sparkContext，用于提交作业执行
+      *
+      * @param master   String：该参数决定运行模式是本地还是远程，如果是 local[n]表示在本地以n线程运行，如果是spark://192.168.1.103:7077表示远程提交执行
+      * @param taskName String：任务名称
+      *
+      * @return SparkContext：sparkContext
+      */
     def getSparkSession(master: String, taskName: String): SparkSession =
     {
         SparkSession.builder().master(master).appName(taskName).getOrCreate()

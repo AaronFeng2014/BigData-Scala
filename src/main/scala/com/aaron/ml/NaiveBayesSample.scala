@@ -29,7 +29,7 @@ object NaiveBayesSample
 
     def main(args: Array[String]): Unit =
     {
-        val sparkContext = SparkContextHelper.getSparkContext("local[2]", "test")
+        val sparkContext = SparkContextHelper.getSparkSession("local[2]", "test").sparkContext
 
         val rdd = sparkContext.textFile("spark-warehouse/bayes.txt").map(line =>
         {

@@ -22,7 +22,7 @@ object ExactSample
         val yearTuple = 151 to 200 map ((key: Int) => ("year", key.toDouble))
 
 
-        val sc: SparkContext = SparkContextHelper.getSparkContext("local[2]", "test")
+        val sc: SparkContext = SparkContextHelper.getSparkSession("local[2]", "test").sparkContext
 
         val data: RDD[(String, Double)] = sc.makeRDD(ageTuple.++(weekTuple).++(monthTuple).++(yearTuple))
 

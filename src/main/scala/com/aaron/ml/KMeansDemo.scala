@@ -16,9 +16,15 @@ object KMeansDemo
     def main(args: Array[String]): Unit =
     {
 
-        val sparkContext = SparkContextHelper.getSparkContext("local[2]", "test")
+        val session = SparkContextHelper.getSparkSession(SparkContextHelper.remoteSparkMaster, "KMeansDemo-success")
 
-        val data = sparkContext.textFile("spark-warehouse/kmeans.txt").map(line =>
+        //如果提交到远程执行，则需要把相关的jar包也要提交上去，否则找不到相关的信息
+        session.sparkContext.addJar("D:\\develop\\code\\personalCode\\BigData-Scala\\classes\\artifacts\\bigdata_scala_jar\\bigdata-scala.jar")
+
+        val sparkContext = session.sparkContext
+
+        //默认读取本地文件系统中的文件，如果是要提交到远程的spark中运行，这里的路径需要是远程系统中的路径或者是hdfs中的路径
+        val data = sparkContext.textFile(SparkContextHelper.remoteHdfsPath + "/home/spark/spark-warehouse/kmeans.txt").map(line =>
         {
             Vectors.dense(line.split(",").map(_.toDouble))
         })
