@@ -34,3 +34,9 @@ libraryDependencies += "com.alibaba" % "fastjson" % "1.2.35"
 //libraryDependencies += "org.json4s" % "json4s-jackson_2.11" % "3.5.3"
 
 libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % "2.9.1"
+
+//添加hbase依赖
+libraryDependencies += "org.apache.hbase" % "hbase-client" % "1.2.6"
+
+//中文分词
+libraryDependencies += "org.ansj" % "ansj_seg" % "5.1.3"
