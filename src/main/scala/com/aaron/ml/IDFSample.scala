@@ -5,6 +5,7 @@ import org.ansj.domain.Term
 import org.ansj.splitWord.analysis.BaseAnalysis
 import org.apache.spark.mllib.feature.{HashingTF, IDF, IDFModel}
 import org.apache.spark.mllib.linalg.distributed.{CoordinateMatrix, MatrixEntry}
+import org.apache.spark.mllib.linalg.{Vector, Vectors}
 import org.apache.spark.rdd.RDD
 
 import scala.collection.JavaConversions._
@@ -26,6 +27,30 @@ object IDFSample
 
     def main(args: Array[String]): Unit =
     {
+        tf_idf_test()
+    }
+
+
+    def tf_idf_test(): Unit =
+    {
+        val rdd: RDD[Vector] = sparkContext.textFile("spark-warehouse/idf-test.txt").map(line => line.split(",").map(value => value.toDouble)).map(line => Vectors.dense(line))
+
+        val idf = new IDF().fit(rdd)
+
+        rdd.foreach(vector =>
+        {
+            val res: Vector = idf.transform(vector)
+
+            println(res)
+        })
+    }
+
+
+    /**
+      * 经过手工造数据实验得知，计算IDF（逆文档序）的对数的底数是自然数e
+      */
+    def tf_idf(): Unit =
+    {
         //转化为List，list中存放的是二元组.(id, content)
         val text: RDD[(Long, String)] = sparkContext.textFile("spark-warehouse/idf.txt").map(line => line.split("\t")).map(array => (array(0).toLong, array(1)))
 
@@ -33,7 +58,7 @@ object IDFSample
         //每行内容转化为TF向量
         val pair_tf = text.map(line =>
         {
-            val hashing = new HashingTF(20)
+            val hashing = new HashingTF(10)
             //返回的是稀疏向量的表达形式(20,[4,7,8,9,10,16],[1.0,1.0,2.0,1.0,1.0,1.0])
 
             //第一个元素表示向量的长度，第二个元素是一个数组，表示非0元素的索引，第三个元素也是数组，表示非0元素的值
@@ -78,7 +103,7 @@ object IDFSample
         val ratings = new CoordinateMatrix(sparkContext.makeRDD(matrixEntries.map(_._2)))
 
         //这里只可以计算列的余弦相似性，因此数据的形式必须是按列存储的，否则应当对矩阵求转置再计算余弦相似性
-        val similarities = ratings.transpose().toRowMatrix().columnSimilarities()
+        val similarities = ratings.transpose().toRowMatrix().columnSimilarities(0)
 
         //文章id列表
         val articleList: Array[Long] = pair_idf.map(idf => idf._1).collect()
