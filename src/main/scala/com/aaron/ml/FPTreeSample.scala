@@ -1,5 +1,9 @@
 package com.aaron.ml
 
+import com.aaron.bigdata.SparkContextHelper
+import org.apache.spark.mllib.fpm.{FPGrowth, FPGrowthModel}
+import org.apache.spark.rdd.RDD
+
 /**
   * 关联规则
   *
@@ -12,17 +16,31 @@ package com.aaron.ml
   * @author FengHaixin
   * @date 2018-01-01
   */
-class FPTreeSample
+object FPTreeSample
 {
+    val sparkSession = SparkContextHelper.getSparkSession(SparkContextHelper.LOCAL_MODEL, "fpGrowthModel")
+
+
     def main(args: Array[String]): Unit =
     {
 
+        fpTree()
     }
 
 
     def fpTree(): Unit =
     {
 
+        val iterms: RDD[Array[String]] = sparkSession.sparkContext.textFile("spark-warehouse/fpgrowth.txt").map(line => line.split(" "))
+
+        val fPGrowth: FPGrowth = new FPGrowth()
+
+        fPGrowth.setMinSupport(0.6)
+
+        val fpGrowthModel: FPGrowthModel[String] = fPGrowth.run(iterms)
+
+        println("关联规则分析结果")
+        fpGrowthModel.freqItemsets.foreach(f => println(f))
     }
 
 }
