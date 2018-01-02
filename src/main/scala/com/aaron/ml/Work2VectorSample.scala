@@ -48,10 +48,25 @@ object Work2VectorSample
 
         for ((key, value) <- word2VecModel.getVectors)
         {
-            println("单词：" + key)
-            value.foreach(println(_))
-            println("=================")
+            println("单词：" + key + ",特征向量：" + value.toList)
+            //value.foreach(println(_))
+            //println("=================")
+            //计算距离
+            for ((innerKey, innerValue) <- word2VecModel.getVectors)
+            {
+                var sum: Double = 0
+
+
+                for (i: Int <- value.indices)
+                {
+                    sum += math.pow(value(i) - innerValue(i), 2)
+                }
+                println("单词：" + key + " 和单词：" + innerKey + " 的欧氏距离：" + math.sqrt(sum))
+                //println("单词：" + key + " 和单词：" + innerKey + " 的余弦相似性：" +)
+            }
         }
+        //session.sparkContext.makeRDD()
+        //word2VecModel.getVectors.map((key: String, value: Array[Float]) => Vectors.dense(value.map(_.toDouble)))
     }
 
 }
