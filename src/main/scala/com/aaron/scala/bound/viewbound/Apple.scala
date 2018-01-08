@@ -8,4 +8,8 @@ package com.aaron.scala.bound.viewbound
 class Apple extends Fruit
 {
 
+    def showName(): Unit =
+    {
+        println("i am apple")
+    }
 }

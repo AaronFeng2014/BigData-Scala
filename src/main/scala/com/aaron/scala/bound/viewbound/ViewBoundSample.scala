@@ -18,11 +18,23 @@ class ViewBoundSample[A]
     }
 
 
+    /**
+      * 试图边界
+      * 申明方式：A <% Apple
+      * 含义：在作用域内，必须存在一个隐式转换，把A转换成Apple
+      *
+      * @param t
+      * @tparam A
+      *
+      * @return
+      */
     def viewBound[A <% Apple](t: A): Int =
     {
         println(t.getClass)
 
         t.showColor()
+
+        t.showName()
 
         3
     }
