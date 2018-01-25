@@ -40,3 +40,7 @@ libraryDependencies += "org.apache.hbase" % "hbase-client" % "1.2.6"
 
 //中文分词
 libraryDependencies += "org.ansj" % "ansj_seg" % "5.1.3"
+
+libraryDependencies += "org.apache.poi" % "poi" % "3.17"
+
+libraryDependencies += "org.apache.poi" % "poi-ooxml" % "3.17"

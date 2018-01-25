@@ -14,19 +14,83 @@ object ListLearning
 
     def main(args: Array[String]): Unit =
     {
-        val source = Source.fromFile("spark-warehouse/data01.txt")
+        val source = Source.fromFile("spark-warehouse/hotel1.txt")
 
-        val result = new StringBuilder()
-        var index = 22118
-        source.getLines().foreach(line =>
+
+        var failList: List[Array[String]] = List()
+
+        var hotelList: List[HotelInfo] = List()
+
+        source.getLines().map(line => line.split("\t")).foreach(line =>
         {
-            val array = line.split("\t")
-            index += 1
-            //result.append("INSERT INTO HTL_DELIVERY.T_MERCHANT_DISTRIBUTOR (ID, MERCHANTCODE, DISTRIBUTORCODE, DISTRIBUTORNAME, CHANNELCODE, SHOPNAME, CREATETIME) VALUES (" + index + ", '" + array(2) + "', '" + array(0) + "', '" + array(5) + "', 'tongcheng', '" + array(3) + "', sysdate);\n")
-            result.append("INSERT INTO HTLPRO.T_HTLPRO_MERCHANT_SALECHANNEL (MERCHANTCODE, SALECHANNELID, SALECHANNELCODE, ISSHOW, SHOWCURRENCY) VALUES ('" + array(2) + "', 20, 'tongcheng', 1, 1);\n")
+            try
+            {
+                var numberOfRoom = 0
+                try
+                {
+                    numberOfRoom = line(10).toInt
+                }
+                catch
+                {
+                    case _: Throwable => numberOfRoom = 0
+                }
+
+                var latitude = 0D
+                try
+                {
+                    latitude = line(47).toDouble
+                }
+                catch
+                {
+                    case _: Throwable => latitude = 0
+                }
+
+                var longitude = 0D
+                try
+                {
+                    longitude = line(48).toDouble
+                }
+                catch
+                {
+                    case _: Throwable => longitude = 0
+                }
+                val hotelInfo = HotelInfo(line(0).toInt, line(1), line(2).toDouble, numberOfRoom, line(42), line(45), line(39), line(40), line(41), latitude, longitude)
+
+                hotelList = hotelList.::(hotelInfo)
+            }
+            catch
+            {
+                case e: ArrayIndexOutOfBoundsException => failList = failList.::(line)
+                case e: NumberFormatException => failList = failList.::(line)
+            }
+
         })
 
-        println(result.toString())
+
+        /* val sql = new StringBuilder()
+
+         hotelList.foreach(hotelInf => {
+
+             sql.append()
+         })*/
+
+
+        val hotel = hotelList.reduceLeft((aHotel, bHotel) =>
+        {
+
+            if (aHotel.cityCode.length() > bHotel.cityCode.length())
+            {
+                println(aHotel.cityCode)
+                aHotel
+            }
+            else
+            {
+                println(bHotel.cityCode)
+                bHotel
+            }
+        })
+
+        println(hotel.hotelId)
     }
 
 
@@ -78,7 +142,7 @@ object ListLearning
 
     private def showNumber(num: Int): Unit =
     {
-        println(num)
+        println
     }
 
 

@@ -1,7 +1,9 @@
 package com.aaron.bigdata.sparksql
 
 import com.aaron.bigdata.DataBaseHelper
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.types.{StringType, StructField, StructType}
+import org.apache.spark.sql.{Row, SparkSession}
 
 /**
   * @description 一句话描述该文件的用途
@@ -20,7 +22,7 @@ object SparkSqlDemo
     def main(args: Array[String]): Unit =
     {
 
-        fromLocalFile()
+        write2Db()
     }
 
 
@@ -61,4 +63,52 @@ object SparkSqlDemo
         //some.foreach(row => println(row.get(4)))
     }
 
+
+    def write2Db() =
+    {
+        val session = SparkSession.builder().master("local[2]").appName("SparkSql Demo").getOrCreate()
+
+        val sqlContext = session.sqlContext
+
+
+        val rdd: RDD[Row] = session.sparkContext.textFile("spark-warehouse/ezeegocity.txt").map(line => line.split("\t")).map[Row](line =>
+        {
+
+            val row: Row = Row(line(0), line(1), line(2), line(3))
+
+            row
+        })
+
+        val schema = StructType(
+            List(
+                StructField("cityName", StringType, false),
+                StructField("cityCode", StringType, true),
+                StructField("countryCode", StringType, true),
+                StructField("countryName", StringType, false)
+            )
+        )
+
+        val cityData = session.createDataFrame(rdd, schema)
+
+        cityData.createOrReplaceTempView("cityInfo")
+
+
+        //val newFrame = sqlContext.sql("select a.countryName, count(1) as totalCity from cityInfo a group by a.countryName order by totalCity DESC")
+
+        //newFrame.show(500)
+
+
+        val total = sqlContext.sql("select count(1) from cityInfo")
+
+        total.show()
+
+        val newFrame = sqlContext.sql("select a.cityCode, count(1) as totalCity from cityInfo a group by a.cityCode order by totalCity DESC")
+
+        newFrame.show(500)
+
+
+        //cityData.write.mode(SaveMode.Append).jdbc(DataBaseHelper.MySql122.URL, "ezeego1_city", DataBaseHelper.MySql122.getConnectionProperties())
+
+
+    }
 }

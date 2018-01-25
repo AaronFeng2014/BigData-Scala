@@ -27,7 +27,7 @@ object FetchBooks
 
         fetchBookInfo(beginUrl)
 
-        executor.shutdown()
+        //executor.shutdown()
 
         println("抓取结束，耗时：" + (System.currentTimeMillis() - start) + "毫秒")
     }
