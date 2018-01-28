@@ -20,6 +20,8 @@ class ContextBoundSample[T]
     /**
       * T: Comparator 上下文边界的申明方式
       *
+      * 表示存在一个Compare[T]类型的隐式值
+      *
       * @param t1 T
       * @param t2 T
       * @tparam T 上下文边界参数

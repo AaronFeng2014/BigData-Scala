@@ -2,6 +2,8 @@ package com.aaron.scala.implicits
 
 import com.aaron.scala.implicits.ImplicitUtils._
 
+import scala.language.implicitConversions
+
 /**
   * @description 一句话描述该文件的用途
   * @author FengHaixin
