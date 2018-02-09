@@ -1,7 +1,7 @@
 package com.aaron.ml
 
 import com.aaron.bigdata.SparkContextHelper
-import org.apache.spark.ml.regression.{LinearRegression, LinearRegressionModel}
+import org.apache.spark.ml.regression.LinearRegression
 import org.apache.spark.rdd.RDD
 
 /**
@@ -25,16 +25,16 @@ object LinearRegressionSample
 
         //implicit  val encoder: Encoder = new ExpressionEncoder()
 
-        val dataSet = sparkSession.createDataset(rdd)
+        //val dataSet = sparkSession.createDataset(rdd)
 
         val model: LinearRegression = new LinearRegression()
 
         model.setMaxIter(10)
 
 
-        val regressionModel: LinearRegressionModel = model.fit(dataSet)
+        //val regressionModel: LinearRegressionModel = model.fit(dataSet)
 
-        println(regressionModel.coefficients)
+        //println(regressionModel.coefficients)
     }
 
 }
