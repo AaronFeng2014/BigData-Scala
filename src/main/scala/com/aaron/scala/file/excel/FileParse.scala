@@ -6,6 +6,8 @@ import com.aaron.bigdata.DataBaseHelper
 import com.aaron.scala.collections.HotelInfo
 import org.apache.poi.ss.usermodel.{Row, Workbook, WorkbookFactory}
 
+import scala.io.Source
+
 /**
   * @description 一句话描述该文件的用途
   * @author FengHaixin
@@ -16,9 +18,13 @@ object FileParse
 
     def main(args: Array[String]): Unit =
     {
-        excelParse("spark-warehouse/new_hotel3.xlsx")
+        //excelParse("spark-warehouse/new_hotel3.xlsx")
 
         //(0 to 20).filter(_ % 5 == 0).foreach(println)
+
+
+        write2DB()
+
     }
 
 
@@ -118,7 +124,8 @@ object FileParse
     }
 
 
-    val sqlTemplate = "INSERT INTO hotelsupplier.ezeego1_hotel (hotelId, hotelName, startRate, roomNumber, cityCode, countryCode, address, location, phone, latitude, longitude) VALUES (?,?,?,?,?,?,?,?,?,?,?)  ON DUPLICATE KEY UPDATE hotelName = values(hotelName), startRate = values(startRate), roomNumber = values(roomNumber), cityCode = values(cityCode), countryCode = values(countryCode), address = values(address), location = values(location), phone = values(phone), latitude = values(latitude), longitude = values(longitude), lastModifyTime = now()"
+    //val sqlTemplate = "INSERT INTO hotelsupplier.ezeego1_hotel (hotelId, hotelName, startRate, roomNumber, cityCode, countryCode, address, location, phone, latitude, longitude) VALUES (?,?,?,?,?,?,?,?,?,?,?)  ON DUPLICATE KEY UPDATE hotelName = values(hotelName), startRate = values(startRate), roomNumber = values(roomNumber), cityCode = values(cityCode), countryCode = values(countryCode), address = values(address), location = values(location), phone = values(phone), latitude = values(latitude), longitude = values(longitude), lastModifyTime = now()"
+    val sqlTemplate = "INSERT INTO hotelsupplier.tourico_hotel_180131 (HotelId, HotelName, ExclusiveDeal, CheckInHour, CheckOutHour, TotalRoomsInHotel, ThumbnailPath, ShortDescription, HotelCurrency, Stars, Address, AddressZip, AddressCity, Location, StateCode, State, CountryCode, CountryName, Longitude, Latitude, sDestination, sHotelCityName, DestinationId, Provider, Phone, Fax, NearestAirportIATACode, RefDirection, RefPointDist, DistUnit, ProductStatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 
 
     def write2DB(hotelList: List[HotelInfo]): Unit =
@@ -154,6 +161,60 @@ object FileParse
 
         connection.close()
 
+        println("插入数据库耗时：" + (System.currentTimeMillis() - start))
+    }
+
+
+    def write2DB(): Unit =
+    {
+        val start = System.currentTimeMillis()
+        val connection = DataBaseHelper.getConnection("jdbc:mysql://192.168.1.133:3306/hotelsupplier?useUnicode=true&characterEncoding=utf8", "hotel", "hot4el")
+
+        connection.setAutoCommit(false)
+
+        //val sqlTemplate = "INSERT INTO hotel.xmd_city_temp (cityId, name, name_en, name_long, name_long_en) VALUES (?,?,?,?,?)  ON DUPLICATE KEY UPDATE name = values(name), name_en = values(name_en), name_long = values(name_long), name_long_en = values(name_long_en)"
+        val prepareStatement = connection.prepareStatement(sqlTemplate)
+
+        val filePath = "spark-warehouse/hotelInfo.txt"
+        var failList: List[Array[String]] = List()
+
+        Source.fromFile(filePath, "utf-16le").getLines().map(line => line.split("\\|")).foreach(line =>
+        {
+
+            try
+            {
+                (0 to 30).foreach(index =>
+                {
+                    if (index == 0)
+                    {
+
+                        prepareStatement.setInt(index + 1, line(index).toInt)
+                    }
+                    else
+                    {
+
+                        val value = line(index).replaceAll("\"", "")
+
+                        prepareStatement.setString(index + 1, value)
+
+                    }
+
+                })
+                prepareStatement.addBatch()
+            }
+            catch
+            {
+                case _: Exception => failList = failList.::(line)
+            }
+
+        })
+
+        prepareStatement.executeBatch()
+        connection.commit()
+
+        connection.close()
+
+        println("失败：" + failList)
         println("插入数据库耗时：" + (System.currentTimeMillis() - start))
     }
 
