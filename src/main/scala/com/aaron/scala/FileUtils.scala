@@ -21,12 +21,19 @@ object FileUtils
       */
     def write2File(content: StringBuilder, destination: String, append: Boolean): Unit =
     {
-        val start = System.currentTimeMillis()
+
+        write2File(content.toString(), destination, append)
+    }
+
+
+    def write2File(content: String, destination: String, append: Boolean): Unit =
+    {
+        //val start = System.currentTimeMillis()
         val stream: OutputStream = new FileOutputStream(rootPath + destination, append)
 
         try
         {
-            stream.write(content.toString().getBytes("UTF-8"))
+            stream.write(content.getBytes("UTF-8"))
         }
         catch
         {
@@ -35,7 +42,7 @@ object FileUtils
         finally
         {
             stream.close()
-            println("文件内容写入成功，耗时：" + (System.currentTimeMillis() - start) + "毫秒")
+            //println("文件内容写入成功，耗时：" + (System.currentTimeMillis() - start) + "毫秒")
         }
     }
 }
