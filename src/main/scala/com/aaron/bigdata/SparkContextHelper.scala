@@ -1,5 +1,6 @@
 package com.aaron.bigdata
 
+import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
 
 /**
@@ -38,6 +39,17 @@ object SparkContextHelper
       */
     def getSparkSession(master: String, taskName: String): SparkSession =
     {
-        SparkSession.builder().master(master).appName(taskName).getOrCreate()
+
+
+        val config: SparkConf = new SparkConf()
+
+        // 设置序列化器为KryoSerializer。
+        config.set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+
+        // 注册要序列化的自定义类型。
+        //config.registerKryoClasses(Array(classOf[MyClass1], classOf[MyClass2]))
+
+
+        SparkSession.builder().master(master).appName(taskName).config(config).getOrCreate()
     }
 }
