@@ -30,6 +30,9 @@ class ContextBoundSample[T]
       */
     def max[T: Comparator](t1: T, t2: T): T =
     {
+        /**
+          * implicitly是位于Predef类中的一个方法， 表示在上下文中获取一个指定的隐式对象（前提是要存在特定类型的隐式对象）
+          */
         val comparator = implicitly[Comparator[T]]
 
         if (comparator.compare(t1, t2) > 0) t1
