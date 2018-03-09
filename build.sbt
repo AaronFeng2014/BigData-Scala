@@ -44,3 +44,23 @@ libraryDependencies += "org.ansj" % "ansj_seg" % "5.1.3"
 libraryDependencies += "org.apache.poi" % "poi" % "3.17"
 
 libraryDependencies += "org.apache.poi" % "poi-ooxml" % "3.17"
+
+
+//操作数据库的一个框架
+libraryDependencies += "io.getquill" %% "quill-core" % "2.3.2"
+libraryDependencies += "io.getquill" %% "quill-jdbc" % "2.3.2"
+libraryDependencies += "io.getquill" %% "quill-sql" % "2.3.2"
+libraryDependencies += "io.getquill" %% "quill-async" % "2.3.2"
+libraryDependencies += "io.getquill" %% "quill-async-mysql" % "2.3.2"
+
+
+libraryDependencies += "com.typesafe.akka" %% "akka-http" % "10.0.11"
+libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json" % "10.0.11"
+
+libraryDependencies += "com.typesafe.akka" %% "akka-stream" % "2.5.11"
+libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.5.11"
+libraryDependencies += "ch.megard" %% "akka-http-cors" % "0.2.2"
+
+//logback日志组件
+libraryDependencies += "ch.qos.logback" % "logback-core" % "1.2.3"
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
