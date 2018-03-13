@@ -64,3 +64,8 @@ libraryDependencies += "ch.megard" %% "akka-http-cors" % "0.2.2"
 //logback日志组件
 libraryDependencies += "ch.qos.logback" % "logback-core" % "1.2.3"
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
+
+
+libraryDependencies += "io.swagger" % "swagger-core" % "1.5.18"
+libraryDependencies += "io.swagger" % "swagger-annotations" % "1.5.18"
+libraryDependencies += "io.swagger" % "swagger-jaxrs" % "1.5.18"

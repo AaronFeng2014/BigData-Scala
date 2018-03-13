@@ -54,7 +54,7 @@ class UsersDao extends Actor
         }
         case userId: Long =>
         {
-            val user: List[AppUsers] = queryUserById(userId)
+            val user: AppUsers = queryUserById(userId).get
 
             LOGGER.info("开始查询单个用户，查询结果：{}", user)
 
@@ -84,7 +84,7 @@ class UsersDao extends Actor
             users.filter(_.appUsersId == lift(userId.toString))
         }
 
-        ctx.run(query)
+        Option(ctx.run(query).head)
     }
 
 
