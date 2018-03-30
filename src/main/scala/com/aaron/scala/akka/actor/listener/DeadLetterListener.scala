@@ -1,4 +1,4 @@
-package com.aaron.scala.actor.listener
+package com.aaron.scala.akka.actor.listener
 
 import akka.actor.{Actor, ActorLogging, DeadLetter}
 
