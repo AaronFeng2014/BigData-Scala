@@ -1,7 +1,6 @@
 package com.aaron.ml.text
 
 import com.aaron.ml.IDFSample.sparkContext
-import org.apache.spark.rdd.RDD
 
 /**
   * @description 一句话描述该文件的用途
@@ -13,24 +12,68 @@ object TextAnalysisSample
 
     def main(args: Array[String]): Unit =
     {
-        simHash()
+        simHash("", "")
     }
 
 
-    def simHash(): Unit =
+    /**
+      * SimHash算法
+      *
+      * 示例文本：
+      * a: 北京的天安门是中国最大的广场，那里每天清晨都会举行隆重的升旗仪式 --> 北京 天安门 中国 广场 清晨 升旗仪式
+      *
+      * b: 成都的天府广场是成都最大的广场，那里每天都有很多大妈跳广场舞 --> 成都 天府 广场 大妈 广场舞
+      *
+      * c: 北京的天安门是中国最大的广场，那里每天清晨都有很多游客观看升旗仪式 --> 北京 天安门 中国 广场 清晨 游客 升旗仪式
+      *
+      *
+    */
+    def simHash(text1: String, text2: String): Unit =
     {
 
-        val text: RDD[Array[String]] = sparkContext.textFile("spark-warehouse/simhash.txt").map(line => line.split(" "))
+      val text1Rdd = sparkContext.makeRDD(text1.split(" "))
 
-        val hash = text.zipWithIndex().map(line =>
+      //这里取1000个特征，计算hash值
+      val hash1 = text1Rdd.map(word => (word, word.hashCode % 1000))
+      hash1.foreach(result => println("原始hash： 词，" + result._1 + ", hash，%s", Integer.toBinaryString(result._2)))
+      //统计权重
+      val weigh1 = hash1.countByKey()
+
+      weigh1.foreach(word => println("文本1权重计算: 词，" + word._1 + "，权重，" + word._2))
+
+      val text2Rdd = sparkContext.makeRDD(text2.split(" "))
+
+      val hash2 = text2Rdd.map(word => (word, word.hashCode % 1000))
+      val weigh2 = hash2.countByKey()
+
+      weigh2.foreach(word => println("文本2权重计算: 词，" + word._1 + "，权重：" + word._2))
+
+      //加权
+      val weighHash1 = hash1.map(word =>
         {
-            line._1.map(word =>
-            {
-                (line._2, word, word.hashCode() % 1000)
-            })
-        }).flatMap(s => s)
+          val weigh: Long = weigh1.getOrElse(word._1, 1)
 
-        hash.foreach(w => println("文本：" + w._1 + "" + w._2 + "的hash值是" + w._3 + ",二进制hash值是" + Integer.toBinaryString(w._3)))
+          (word._1,
+           Integer
+             .toBinaryString(word._2)
+             .map(c => {
+             if (c >= 0) weigh else weigh * -1
+           }))
+      })
+
+      weighHash1.foreach(result => println("加权hash： 词，" + result._1 + ", hash，%s", result._2))
+
+      val weighHash2 = hash2.map(word => {
+        val weigh: Long = weigh1.getOrElse(word._1, 1)
+
+        (word._1,
+         Integer.toBinaryString(word._2)
+           .map(c => {
+             if (c >= 0) weigh else weigh * -1
+           }))
+      })
+
+      weighHash2.foreach(result => println("加权hash： 词，" + result._1 + ", hash，%s", result._2))
     }
 
 
